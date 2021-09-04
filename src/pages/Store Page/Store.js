@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useToasts } from 'react-toast-notifications';
 
 import Navbar from "components/Navbar/Navbar";
+import { Link } from 'react-router-dom';
 
 const STORE_ID = 2; // value from localStorage
 
-function Store() {
+function Store({ value, setValue }) {
+
+    const { addToast } = useToasts();
 
     const [storeInfo, setStoreInfo] = useState({});
     const [medicineInStore, setMedicineInStore] = useState([]);
@@ -28,11 +32,30 @@ function Store() {
 
     }, []);
 
-    const _onClick = e => {console.log(e.target.value)}
+    const _onClick = e => {
+        const data = JSON.parse(e.target.value)
+        if(value.length === 0) {
+            value.push(data)
+        } else {
+            for (let i = 0; i < value.length; i++) {
+                const element = value[i];
+                if(element.id === data.id) {
+                    console.error("Already here")
+                } else {
+                    value.push(data)
+                    console.info('Added!')
+                }
+            }
+        }
+        value = [...new Set(value)]
+        console.log(value);
+        e.preventDefault()
+    }
 
     return (
         <div>
             <Navbar />
+            <Link to="/cart">Cart</Link>
             {
                 // Card For Store Information 
             }
@@ -66,7 +89,14 @@ function Store() {
                                                 <b>Mfg Date</b> : {ele.mfg_date}<br />
                                                 <b>Exp Date</b> : {ele.exp_date}<br />
                                             </p>
-                                            <button onClick={_onClick} value={ele.medicine_id.medicine_id} className="mx-auto btn btn-success mx-auto" >Buy</button>
+                                            <button
+                                                id="add-to-cart"
+                                                onClick={_onClick}
+                                                value={JSON.stringify(ele)}
+                                                className="mx-auto btn btn-success"
+                                            >
+                                                Add To Cart
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
