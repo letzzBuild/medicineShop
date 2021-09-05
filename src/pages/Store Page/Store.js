@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import { useToasts } from 'react-toast-notifications';
 
 import Navbar from "components/Navbar/Navbar";
 import { Link } from 'react-router-dom';
+import MedicinesContext from 'contexts/Medicine';
 
-const STORE_ID = 2; // value from localStorage
 
-function Store({ value, setValue }) {
+function Store() {
+    const STORE_ID = 2; // value from props
 
-    const { addToast } = useToasts();
+    const {medicines, setMedicines} = useContext(MedicinesContext)
 
     const [storeInfo, setStoreInfo] = useState({});
     const [medicineInStore, setMedicineInStore] = useState([]);
@@ -32,30 +32,22 @@ function Store({ value, setValue }) {
 
     }, []);
 
-    const _onClick = e => {
-        const data = JSON.parse(e.target.value)
-        if(value.length === 0) {
-            value.push(data)
-        } else {
-            for (let i = 0; i < value.length; i++) {
-                const element = value[i];
-                if(element.id === data.id) {
-                    console.error("Already here")
-                } else {
-                    value.push(data)
-                    console.info('Added!')
-                }
-            }
+    function addToList(data) {
+        const order_obj = {
+            medicine_name: data.medicine_id.medicine_name,
+            medicine_id: data.medicine_id.medicine_id,
+            image: data.medicine_id.image,
+            price: data.price,
+            quantity: 1
         }
-        value = [...new Set(value)]
-        console.log(value);
-        e.preventDefault()
+        medicines.push(order_obj)
     }
 
     return (
         <div>
             <Navbar />
             <Link to="/cart">Cart</Link>
+            <Link to="/payment">Payment</Link>
             {
                 // Card For Store Information 
             }
@@ -79,19 +71,19 @@ function Store({ value, setValue }) {
                         medicineInStore.map(ele => {
                             return (
                                 <div key={ele.id} className="col-xl-3">
-                                    <div className="card mb-3" style={{ width: "18rem" }}>
+                                    <div className="card mb-3" style={{ width: "20rem" }}>
                                         <img src={axios.defaults.baseURL + ele.medicine_id.image} className="card-img-top" alt={axios.defaults.baseURL + ele.medicine_id.image} />
                                         <div className="card-body">
                                             <p className="card-text">
                                                 <b>Medicine Name</b> : {ele.medicine_id.medicine_name}<br />
                                                 <b>Availabel Quantity</b> : {ele.quantity}<br />
-                                                <b>Price</b> : {ele.price}<br />
+                                                <b>Price</b> : {ele.price}₹<br />
                                                 <b>Mfg Date</b> : {ele.mfg_date}<br />
                                                 <b>Exp Date</b> : {ele.exp_date}<br />
                                             </p>
                                             <button
                                                 id="add-to-cart"
-                                                onClick={_onClick}
+                                                onClick={() => addToList(ele)}
                                                 value={JSON.stringify(ele)}
                                                 className="mx-auto btn btn-success"
                                             >

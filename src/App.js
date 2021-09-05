@@ -7,19 +7,22 @@ import Home from 'pages/HomePage/Home.js';
 
 import Store from 'pages/Store Page/Store';
 import Cart from 'pages/Cart Page/Cart';
+import Payment from 'pages/Payment Page/Payment';
+import PaymentSuccess from 'pages/Payment Page/PaymentSuccess';
 import MedicinesContext from 'contexts/Medicine';
 
 
 function App() {
 
-    const [orderMedicines, setOrderMedicines] = useState([]);
+    const [medicines, setMedicines] = useState([]);
+    const value = {medicines, setMedicines}
 
     return (
         <div>
             <ToastProvider>
             <Router>
                 <Switch>
-                    <MedicinesContext.Provider value={orderMedicines}>
+                    <MedicinesContext.Provider value={value}>
                         <Route exact path="/" component={Home} />
                         {/* <Route exact path="/addaccount" component={Addaccount} /> */}
                         <Route exact path="/signup" component={Signup} />
@@ -33,8 +36,10 @@ function App() {
                         <Route exact path="/login" component={Login} />
 
                         {/* Route For Store Page */}
-                        <Route exact path="/store" component={()=>(<Store value={orderMedicines} setValue={setOrderMedicines} />)} />
+                        <Route exact path="/store" component={Store} />
                         <Route exact path="/cart" component={Cart} />
+                        <Route exact path="/payment" component={Payment} />
+                        <Route exact path="/paymentsuccess" component={PaymentSuccess} />
                     </MedicinesContext.Provider>
                 </Switch>
             </Router>
