@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import MedicinesContext from 'contexts/Medicine';
 import axios from 'axios';
 import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import Navbar from 'components/Navbar/Navbar';
 
@@ -29,16 +30,20 @@ const Payment = () => {
         },
         onSubmit: data => {
             console.log('Card Value', data)
-            axios.post('/order/success/', data)
-                .then(res => {
-                    console.log('[Response]',res.data)
-                    setMedicines([])
-                    history.push({
-                        pathname: '/paymentsuccess',
-                        state: res.data.res
+            if(cashOnDelivery) {
+                history.push('/paymentsuccess')
+            } else {
+                axios.post('/order/success/', data)
+                    .then(res => {
+                        console.log('[Response]',res.data)
+                        setMedicines([])
+                        history.push({
+                            pathname: '/paymentsuccess',
+                            state: res.data.res
+                        })
                     })
-                })
-                .catch(error => console.error(error))
+                    .catch(error => console.error(error))
+            }
         }
     })
 
@@ -169,11 +174,7 @@ const Payment = () => {
                                                     </div>
                                                 </div>
                                             </>
-                                        ) : cashOnDelivery ? (
-                                            <div className="d-flex">
-                                                <button className="btn btn-success my-4">Complete</button>
-                                            </div>
-                                        ) : null
+                                        ) :  null
                                     }
                                 </div>
                                 {/*
@@ -218,7 +219,7 @@ const Payment = () => {
                                         </div>
                                         <hr />
                                         <div className="d-flex">
-                                            <button type="submit" className="btn btn-outline-success mx-auto">Place order</button>
+                                            <button disabled={formik.isSubmitting} type="submit" className="btn btn-outline-success mx-auto">Place order</button>
                                         </div>
                                         <p className="text-muted text-center">
                                             Complimentary Shipping & Returns

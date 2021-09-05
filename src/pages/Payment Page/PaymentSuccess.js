@@ -1,10 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLocation} from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export default function PaymentSuccess() {
-    const params = useLocation().state
-    console.log('Params: ',params.charges.data[0].receipt_url)
     return (
         <div className="bg-success" style={{ "height": "100vh" }}>
             <div className="pyro">
@@ -27,13 +25,6 @@ export default function PaymentSuccess() {
                                 >
                                     Back To Shoping
                                 </Link>
-                                <a
-                                    href={params.charges.data[0].receipt_url}
-                                    target="_blank"
-                                    className="font-weight-bold btn btn-sm btn-outline-light mx-3"
-                                >
-                                    View Receipt
-                                </a>
                             </p>
                         </div>
                     </div>
