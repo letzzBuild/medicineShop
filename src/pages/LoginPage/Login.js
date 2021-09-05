@@ -1,26 +1,55 @@
 import React from "react";
-import {useFormik} from 'formik';
+import { useFormik } from 'formik';
 import { Link, Redirect, NavLink } from "react-router-dom";
 import * as yup from 'yup';
+import axios from "axios";
+import { ToastProvider, useToasts } from 'react-toast-notifications';
+import { useHistory } from "react-router-dom";
 
 function Login() {
+  const { addToast } = useToasts();
+  const history = useHistory();
+
 
   const schema = yup.object().shape({
     user_email: yup.string().required().email(),
-    password: yup.string().required().min(6,"password should be greater than 6"),
-})
+    password: yup.string().required().min(6, "password should be greater than 6"),
+  })
 
- const formik = useFormik({
-     initialValues: {
-         user_email: '',
-         password : ''
-     },
-     onSubmit: (data)=> {
-         console.log(data)
+  const formik = useFormik({
+    initialValues: {
+      user_email: '',
+      password: ''
+    },
+    onSubmit: (data) => {
+      console.log(data)
+      axios.post('/user/login/', data).then(
+        (res) => {
+          console.log("response", res);
+          addToast('Loged in Successfully', { appearance: 'success' });
+          localStorage.setItem('user_id', res.data.user_id)
+          if (res.data.role === 'Seller') {
+            localStorage.setItem('store_id', res.data.store_id)
+            history.push('/seller')
+          } else {
+            history.push('/product')
+          }
+        }
+      ).catch((err) => {
+        if (err.response) {
+          console.log(err.response.data.detail)
+          addToast(err.response.data.detail, { appearance: 'error' });
+        }
+        else {
+          console.log("server is down")
+          addToast("Server is down", { appearance: 'error' });
+        }
 
-     },
-     validationSchema : schema,
- });
+      })
+
+    },
+    validationSchema: schema,
+  });
 
 
   return (
@@ -43,7 +72,7 @@ function Login() {
               width="2em"
               height="2em"
               viewBox="0 0 16 16"
-              class="bi bi-bag-fill inline-block align-bottom mr-2"
+              className="bi bi-bag-fill inline-block align-bottom mr-2"
               fill="orange"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -93,7 +122,7 @@ function Login() {
                     width="2em"
                     height="2em"
                     viewBox="0 0 16 16"
-                    class="bi bi-bag-fill inline-block align-bottom mr-2"
+                    className="bi bi-bag-fill inline-block align-bottom mr-2"
                     fill="orange"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -110,15 +139,15 @@ function Login() {
                 <form onSubmit={formik.handleSubmit}>
                   <div className="form-group">
                     <label>Email</label>
-                    <input type="text" 
-                    className="form-control"
-                    
-                    placeholder="Email*"
-                    name="user_email"
-                    value={formik.values.user_email}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    required
+                    <input type="text"
+                      className="form-control"
+
+                      placeholder="Email*"
+                      name="user_email"
+                      value={formik.values.user_email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      required
                     />
                   </div>
                   <div className="form-group">

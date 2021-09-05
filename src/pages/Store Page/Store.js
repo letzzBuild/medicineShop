@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-
+import { useLocation } from 'react-router-dom';
 import Navbar from "components/Navbar/Navbar";
 import { Link } from 'react-router-dom';
 import MedicinesContext from 'contexts/Medicine';
 
 
 function Store() {
-    const STORE_ID = 2; // value from props
+    const STORE_ID = useLocation().state;
 
     const {medicines, setMedicines} = useContext(MedicinesContext)
 
@@ -46,8 +46,6 @@ function Store() {
     return (
         <div>
             <Navbar />
-            <Link to="/cart">Cart</Link>
-            <Link to="/payment">Payment</Link>
             {
                 // Card For Store Information 
             }

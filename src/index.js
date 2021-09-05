@@ -7,7 +7,8 @@ import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js'
 
-axios.defaults.baseURL = "http://127.0.0.1:8000"
+axios.defaults.baseURL = "http://127.0.0.1:8000";
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const stripeConfig = loadStripe('pk_test_51JPIxKSCWQ7TprZSX26u3pd250KuHAg4DDnVFSwuRCa3m3IdP8ca4zk6DNHbilRryJUWqJHGTO2vGYZkdPDkkJyj00ZgT0dsro')
 

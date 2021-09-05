@@ -98,7 +98,9 @@ function Cart() {
     return (
         <>
             <Navbar />
-            <Link to="/store">Store</Link>
+            <div className="d-flex my-3">
+                <h4 className="mx-auto text-danger">Once Order Place Cannot Be Cancelled</h4>
+            </div>
             <div className="container bg-cart-list">
                 <div className="row ">
                     {
@@ -174,6 +176,7 @@ function Cart() {
                     </div>
                 )
             }
+            <div></div>
         </>
     )
 }

@@ -2,7 +2,14 @@ import React from 'react'
 import {useFormik} from 'formik';
 import { Link, Redirect, NavLink } from "react-router-dom";
 import * as yup from 'yup';
+import axios from "axios";
+import { ToastProvider, useToasts } from 'react-toast-notifications';
+import { useHistory } from "react-router-dom";
+
 function Signup() {
+
+  const { addToast } = useToasts();
+  const history = useHistory();
 
     const schema = yup.object().shape({
         user_email: yup.string().required().email(),
@@ -18,6 +25,23 @@ function Signup() {
          },
          onSubmit: (data)=> {
              console.log(data)
+             axios.post('/user/add/',data).then(
+              (res)=>{
+                console.log("response",res);
+                addToast('Register Successfully', { appearance: 'success' });
+                history.push('/product')
+              }
+            ).catch((err)=>{
+              if(err.response){
+               console.log(err.response.data.error.user_email)
+               addToast(err.response.data.error.user_email[0], { appearance: 'error' });
+              }
+              else{
+                console.log("server is down")
+                addToast("Server is down", { appearance: 'error' });
+              }
+              
+            })
 
          },
          validationSchema : schema,
@@ -59,7 +83,7 @@ function Signup() {
 
           <ul className="navbar-nav mr-auto">
             <li className="nav-item active ">
-              <NavLink className="nav-link  mt-3" exact to="/store">
+              <NavLink className="nav-link  mt-3" exact to="/product">
                 Store <span className="sr-only ">(current)</span>
               </NavLink>
             </li>
