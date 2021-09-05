@@ -7,7 +7,9 @@ const Navbar = ({ isAuthenticated}) => {
     const authLinks = (
         <li className="nav-item">
             <a className='nav-link'  href='#!'>Logout</a>
+           
         </li>
+        
     );
 
     const guestLinks = (

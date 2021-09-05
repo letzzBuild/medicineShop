@@ -1,14 +1,156 @@
-import React from "react";
-import { Link} from "react-router-dom";
+import React,{useState} from "react";
+import { Link,NavLink} from "react-router-dom";
 import shop from 'assets/shoping.png';
 import './homepage.css'
 import NavBar from 'components/Navbar/Navbar.js'
+import axios from 'axios';
+import { useHistory } from "react-router-dom";
 
 function Home() {
+  const history = useHistory();
+  let cancelToken;
+  const [products, setproducts] = useState([])
+
+  const searchMedicines = (event) =>{
+   
+    let data = {
+      "medicine_name" : event.target.value
+    }
+    //Check if there are any previous pending requests
+  if (typeof cancelToken != typeof undefined) {
+    cancelToken.cancel("Operation canceled due to new request.")
+  }
+
+  //Save the cancel token for the current request
+  cancelToken = axios.CancelToken.source()
+
+axios.post("/medicine/search/medicine/",data,{cancelToken:cancelToken.token}).then((res)=>{
+  console.log(res.data);
+  setproducts(res.data)
+}).catch(()=>{})
+  }
+
+
+  const getproducts = () => {
+    console.log("getting products");
+    let list = [];
+    let result = [];
+    products.map((product) => {
+      return list.push(
+        <div className="card mb-4 shadow-sm">
+        <div className = "limit">
+          <img
+            style={{
+              display: "block",
+              margin: "0 auto 10px",
+              maxHeight: "200px",
+              maxWidth: "100",
+            }}
+            className="img-fluid"
+            src={axios.defaults.baseURL + product.medicine_image}
+            alt="Card image cap"
+          />
+          </div>
+          <span class="card-notify-year">10%</span>
+          <div className="card-body">
+            <strong className="d-inline-block mb-2 text-secondary">
+              {product.medicine_name}
+            </strong>
+            <h5 className="card-title">Store Name :{product.store_name}</h5>
+            <h5 className="card-title">
+              <span className="text-muted ">Store Phone :</span>
+              {product.store_phone}
+             </h5>
+             <h5 className="card-title">
+              <span className="text-muted ">Store Address :</span>
+              {product.store_address}
+             </h5>
+            <h4 className="card-title">
+              <span className="text-success">Price :</span>
+              {product.price}
+              <span className="card-text"> Rs.</span>
+            </h4>
+            <hr className="my-4" />
+            
+              <button
+                onClick={() => {localStorage.setItem('store_id',product.store_id);
+                 history.push('/store')
+                         }
+                }
+                className="btn btn-outline-success float-right mb-2"
+              >
+                View In Store
+              </button>
+            
+
+            
+          </div>
+        </div>
+      );
+    });
+
+    for (let i = 0; i < list.length; i += 3) {
+      result.push(
+        <div className="container">
+          <div key={i} className="row">
+            <div className="col-md-4">{list[i] ? list[i] : null}</div>
+            <div className="col-md-4">{list[i + 1] ? list[i + 1] : null}</div>
+            <div className="col-md-4">{list[i + 2] ? list[i + 2] : null}</div>
+          </div>
+        </div>
+      );
+    }
+
+    return result;
+  };  
+
+
   return (
+
   
     <div>
-      <NavBar  isAuthenticated={true}/>
+      <nav className="navbar shadow navbar-expand-lg navbar-dark bg-dark navbar-expand-lg p-4">
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarTogglerDemo01"
+          aria-controls="navbarTogglerDemo01"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
+          <NavLink className="navbar-brand " to exact="/">
+            <svg
+              width="2em"
+              height="2em"
+              viewBox="0 0 16 16"
+              class="bi bi-bag-fill inline-block align-bottom mr-2"
+              fill="orange"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 1a2.5 2.5 0 0 0-2.5 2.5V4h5v-.5A2.5 2.5 0 0 0 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5z"
+              />
+            </svg>
+            Online Medical Store
+          </NavLink>
+
+          <ul className="navbar-nav mr-auto">
+            <li className="nav-item active ">
+              <NavLink className="nav-link  mt-3" exact to="/product">
+                Store <span className="sr-only ">(current)</span>
+              </NavLink>
+            </li>
+          </ul>
+          <input onChange={searchMedicines} type="text" class="form-control" placeholder="Search Medicine Name" aria-label="Username" aria-describedby="basic-addon1"></input>
+
+          
+        </div>
+      </nav>
       <div className="homepage">
         <div className="banner">
           <div className="description">
@@ -50,6 +192,9 @@ function Home() {
           </svg>
         </div>
       </div>
+ <br></br>
+ <div style={{margin:10}}><h2>Products Results</h2></div>
+  {getproducts()}
     </div>
   );
 }

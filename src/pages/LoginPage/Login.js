@@ -2,8 +2,14 @@ import React from "react";
 import {useFormik} from 'formik';
 import { Link, Redirect, NavLink } from "react-router-dom";
 import * as yup from 'yup';
+import axios from "axios";
+import { ToastProvider, useToasts } from 'react-toast-notifications';
+import { useHistory } from "react-router-dom";
 
 function Login() {
+  const { addToast } = useToasts();
+  const history = useHistory();
+
 
   const schema = yup.object().shape({
     user_email: yup.string().required().email(),
@@ -17,6 +23,23 @@ function Login() {
      },
      onSubmit: (data)=> {
          console.log(data)
+         axios.post('/user/login/',data).then(
+           (res)=>{
+             console.log("response",res);
+             addToast('Loged in Successfully', { appearance: 'success' });
+             history.push('/product')
+           }
+         ).catch((err)=>{
+           if(err.response){
+            console.log(err.response.data.detail)
+            addToast(err.response.data.detail, { appearance: 'error' });
+           }
+           else{
+             console.log("server is down")
+             addToast("Server is down", { appearance: 'error' });
+           }
+           
+         })
 
      },
      validationSchema : schema,
