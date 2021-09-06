@@ -170,7 +170,7 @@ function Cart() {
                                 </div>
                             </div>
                             <div className="row justify-content-center">
-                                <button type="submit" className="btn btn-primary">Submit</button>
+                                <button disabled={formik.isSubmitting} type="submit" className="btn btn-primary">Submit</button>
                             </div>
                         </form>
                     </div>
