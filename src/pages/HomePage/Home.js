@@ -1,5 +1,5 @@
-import React,{useState} from "react";
-import { Link,NavLink} from "react-router-dom";
+import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import shop from 'assets/shoping.png';
 import './homepage.css'
 import NavBar from 'components/Navbar/Navbar.js'
@@ -11,23 +11,23 @@ function Home() {
   let cancelToken;
   const [products, setproducts] = useState([])
 
-  const searchMedicines = (event) =>{
-   
+  const searchMedicines = (event) => {
+
     let data = {
-      "medicine_name" : event.target.value
+      "medicine_name": event.target.value
     }
     //Check if there are any previous pending requests
-  if (typeof cancelToken != typeof undefined) {
-    cancelToken.cancel("Operation canceled due to new request.")
-  }
+    if (typeof cancelToken != typeof undefined) {
+      cancelToken.cancel("Operation canceled due to new request.")
+    }
 
-  //Save the cancel token for the current request
-  cancelToken = axios.CancelToken.source()
+    //Save the cancel token for the current request
+    cancelToken = axios.CancelToken.source()
 
-axios.post("/medicine/search/medicine/",data,{cancelToken:cancelToken.token}).then((res)=>{
-  console.log(res.data);
-  setproducts(res.data)
-}).catch(()=>{})
+    axios.post("/medicine/search/medicine/", data, { cancelToken: cancelToken.token }).then((res) => {
+      console.log(res.data);
+      setproducts(res.data)
+    }).catch(() => { })
   }
 
 
@@ -38,18 +38,18 @@ axios.post("/medicine/search/medicine/",data,{cancelToken:cancelToken.token}).th
     products.map((product) => {
       return list.push(
         <div className="card mb-4 shadow-sm">
-        <div className = "limit">
-          <img
-            style={{
-              display: "block",
-              margin: "0 auto 10px",
-              maxHeight: "200px",
-              maxWidth: "100",
-            }}
-            className="img-fluid"
-            src={axios.defaults.baseURL + product.medicine_image}
-            alt="Card image cap"
-          />
+          <div className="limit">
+            <img
+              style={{
+                display: "block",
+                margin: "0 auto 10px",
+                maxHeight: "200px",
+                maxWidth: "100",
+              }}
+              className="img-fluid"
+              src={axios.defaults.baseURL + product.medicine_image}
+              alt="Card image cap"
+            />
           </div>
           <span class="card-notify-year">10%</span>
           <div className="card-body">
@@ -60,30 +60,33 @@ axios.post("/medicine/search/medicine/",data,{cancelToken:cancelToken.token}).th
             <h5 className="card-title">
               <span className="text-muted ">Store Phone :</span>
               {product.store_phone}
-             </h5>
-             <h5 className="card-title">
+            </h5>
+            <h5 className="card-title">
               <span className="text-muted ">Store Address :</span>
               {product.store_address}
-             </h5>
+            </h5>
             <h4 className="card-title">
               <span className="text-success">Price :</span>
               {product.price}
               <span className="card-text"> Rs.</span>
             </h4>
             <hr className="my-4" />
-            
-              <button
-                onClick={() => {localStorage.setItem('store_id',product.store_id);
-                 history.push('/store')
-                         }
-                }
-                className="btn btn-outline-success float-right mb-2"
-              >
-                View In Store
-              </button>
-            
 
-            
+            <button
+              onClick={() => {
+                history.push({
+                  pathname: '/store',
+                  state: product.store_id
+              })
+              }
+              }
+              className="btn btn-outline-success float-right mb-2"
+            >
+              View In Store
+            </button>
+
+
+
           </div>
         </div>
       );
@@ -102,12 +105,12 @@ axios.post("/medicine/search/medicine/",data,{cancelToken:cancelToken.token}).th
     }
 
     return result;
-  };  
+  };
 
 
   return (
 
-  
+
     <div>
       <nav className="navbar shadow navbar-expand-lg navbar-dark bg-dark navbar-expand-lg p-4">
         <button
@@ -148,7 +151,7 @@ axios.post("/medicine/search/medicine/",data,{cancelToken:cancelToken.token}).th
           </ul>
           <input onChange={searchMedicines} type="text" class="form-control" placeholder="Search Medicine Name" aria-label="Username" aria-describedby="basic-addon1"></input>
 
-          
+
         </div>
       </nav>
       <div className="homepage">
@@ -192,9 +195,9 @@ axios.post("/medicine/search/medicine/",data,{cancelToken:cancelToken.token}).th
           </svg>
         </div>
       </div>
- <br></br>
- <div style={{margin:10}}><h2>Products Results</h2></div>
-  {getproducts()}
+      <br></br>
+      <div style={{ margin: 10 }}><h2>Products Results</h2></div>
+      {getproducts()}
     </div>
   );
 }

@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-
+import { useLocation } from 'react-router-dom';
 import Navbar from "components/Navbar/Navbar";
+import { Link } from 'react-router-dom';
+import MedicinesContext from 'contexts/Medicine';
 
-const STORE_ID = 2; // value from localStorage
 
 function Store() {
+    const STORE_ID = useLocation().state;
+
+    const {medicines, setMedicines} = useContext(MedicinesContext)
 
     const [storeInfo, setStoreInfo] = useState({});
     const [medicineInStore, setMedicineInStore] = useState([]);
@@ -28,7 +32,16 @@ function Store() {
 
     }, []);
 
-    const _onClick = e => {console.log(e.target.value)}
+    function addToList(data) {
+        const order_obj = {
+            medicine_name: data.medicine_id.medicine_name,
+            medicine_id: data.medicine_id.medicine_id,
+            image: data.medicine_id.image,
+            price: data.price,
+            quantity: 1
+        }
+        medicines.push(order_obj)
+    }
 
     return (
         <div>
@@ -56,17 +69,24 @@ function Store() {
                         medicineInStore.map(ele => {
                             return (
                                 <div key={ele.id} className="col-xl-3">
-                                    <div className="card mb-3" style={{ width: "18rem" }}>
+                                    <div className="card mb-3" style={{ width: "20rem" }}>
                                         <img src={axios.defaults.baseURL + ele.medicine_id.image} className="card-img-top" alt={axios.defaults.baseURL + ele.medicine_id.image} />
                                         <div className="card-body">
                                             <p className="card-text">
                                                 <b>Medicine Name</b> : {ele.medicine_id.medicine_name}<br />
                                                 <b>Availabel Quantity</b> : {ele.quantity}<br />
-                                                <b>Price</b> : {ele.price}<br />
+                                                <b>Price</b> : {ele.price}₹<br />
                                                 <b>Mfg Date</b> : {ele.mfg_date}<br />
                                                 <b>Exp Date</b> : {ele.exp_date}<br />
                                             </p>
-                                            <button onClick={_onClick} value={ele.medicine_id.medicine_id} className="mx-auto btn btn-success mx-auto" >Buy</button>
+                                            <button
+                                                id="add-to-cart"
+                                                onClick={() => addToList(ele)}
+                                                value={JSON.stringify(ele)}
+                                                className="mx-auto btn btn-success"
+                                            >
+                                                Add To Cart
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

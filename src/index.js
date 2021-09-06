@@ -4,17 +4,19 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js'
 
-<<<<<<< HEAD
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-=======
-axios.defaults.baseURL = "http://127.0.0.1:8000"
->>>>>>> 47248f3d948525f45485511caf6679635820d491
+
+const stripeConfig = loadStripe('pk_test_51JPIxKSCWQ7TprZSX26u3pd250KuHAg4DDnVFSwuRCa3m3IdP8ca4zk6DNHbilRryJUWqJHGTO2vGYZkdPDkkJyj00ZgT0dsro')
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Elements stripe={stripeConfig}>
+      <App />
+    </Elements>
   </React.StrictMode>,
   document.getElementById('root')
 );
